@@ -32,6 +32,9 @@ app.use(morgan('dev'))
 
 app.use(fileUpload())
 
+
+
+app.use("/tavak", TavakRoutes)
 app.use(errorHandler)
 app.get('/', (req, res) => {
     res.status(400).json({ success: false})
