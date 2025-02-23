@@ -23,7 +23,7 @@ database.once("connected", () => {
 });
 
 const auth = require('./routes/auth')
-
+const TavakRoutes=require('./routes/lake')
 const app = express()
 
 app.use(cors({
@@ -43,6 +43,7 @@ app.use(fileUpload())
 
 // app.use(express.static(path.join(__dirname, 'public')))
 app.use("/auth", auth);
+app.use("/tavak", TavakRoutes)
 app.use(errorHandler)
 app.get('/', (req, res) => {
     res.status(400).json({ success: false})
