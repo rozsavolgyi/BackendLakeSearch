@@ -24,12 +24,15 @@ const UserSchema = new mongoose.Schema({
         select: false   //Amikor lekérünk egy felhasználót az API-tól
                         //nem fogja visszaadni a jelszót
     },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
     createdAt: {
         type: Date,
         default: Date.now
     }
 
 })
+
 // A jelszó titkosítása bcrypt-tel
 UserSchema.pre('save', async function(next) {
     if (!this.isModified('password')) {
@@ -38,6 +41,7 @@ UserSchema.pre('save', async function(next) {
     const salt = await bcrypt.genSalt(10)
     this.password = await bcrypt.hash(this.password, salt)
 })
+
 // A JWT aláírása és visszaadása
 UserSchema.methods.getSignedJwtToken = function () {
     return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
