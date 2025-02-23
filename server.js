@@ -20,7 +20,7 @@ database.once("connected", () => {
     console.log(`Database Connected ${database.host}`);
 });
 
-
+const auth = require('./routes/auth')
 const app = express()
 app.use(cors({
     origin: 'http://localhost:4200', // Engedélyezi a frontendet
@@ -34,7 +34,8 @@ app.use(fileUpload())
 
 
 
-app.use("/tavak", TavakRoutes)
+
+app.use("/auth", auth);
 app.use(errorHandler)
 app.get('/', (req, res) => {
     res.status(400).json({ success: false})
