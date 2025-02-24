@@ -47,7 +47,7 @@ app.use(fileUpload())
 // app.use(express.static(path.join(__dirname, 'public')))
 app.use("/auth", auth);
 app.use("/tavak", TavakRoutes)
-app.use("/typicalfish", typicalfish)
+app.use("/typicalFish", typicalfish)
 app.use(errorHandler)
 app.get('/', (req, res) => {
     res.status(400).json({ success: false})
