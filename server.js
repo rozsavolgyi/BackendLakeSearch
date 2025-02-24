@@ -6,6 +6,7 @@ const morgan = require('morgan')
 const fileUpload = require('express-fileupload')
 const cookieParser = require('cookie-parser')
 const errorHandler = require('./middleware/error')
+const fs=require('fs')
 
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", true);
@@ -24,7 +25,8 @@ database.once("connected", () => {
 
 const auth = require('./routes/auth')
 const TavakRoutes=require('./routes/lake')
-const typicalFish=require('./routes/typicalFish')
+const typicalfish=require('./routes/typicalFish');
+
 const app = express()
 
 app.use(cors({
@@ -45,7 +47,7 @@ app.use(fileUpload())
 // app.use(express.static(path.join(__dirname, 'public')))
 app.use("/auth", auth);
 app.use("/tavak", TavakRoutes)
-app.use("/typicalFish", typicalFish)
+app.use("/typicalfish", typicalfish)
 app.use(errorHandler)
 app.get('/', (req, res) => {
     res.status(400).json({ success: false})
