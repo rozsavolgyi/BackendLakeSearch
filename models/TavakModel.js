@@ -14,17 +14,18 @@ const ToSchema = new mongoose.Schema({
   location: {
     type: String
   },
-  coordinates:{
+  coordinates: {
     type: [Number]
   },
-  description:{
-    type:String
+  description: {
+    type: String
   },
-  typical_fish: {
-    type : mongoose.Schema.Types.ObjectId,
-    ref: "typicalFishModel"
-
-  },
+  typical_fish: [{
+    fish: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "typicalFishModel"
+    }
+  }],
   water_depth: {
     type: String
   },
