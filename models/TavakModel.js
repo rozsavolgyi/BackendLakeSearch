@@ -22,6 +22,7 @@ const ToSchema = new mongoose.Schema({
   },
   typical_fish: [{
     fish: {
+      _id: false,
       type: mongoose.Schema.Types.ObjectId,
       ref: "typicalFishModel"
     }
