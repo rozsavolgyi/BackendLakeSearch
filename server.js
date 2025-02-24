@@ -26,6 +26,7 @@ database.once("connected", () => {
 const auth = require('./routes/auth')
 const TavakRoutes=require('./routes/lake')
 const typicalfish=require('./routes/typicalFish');
+const county=require('./routes/county')
 
 const app = express()
 
@@ -48,6 +49,7 @@ app.use(fileUpload())
 app.use("/auth", auth);
 app.use("/tavak", TavakRoutes)
 app.use("/typicalFish", typicalfish)
+app.use("/county", county)
 app.use(errorHandler)
 app.get('/', (req, res) => {
     res.status(400).json({ success: false})
