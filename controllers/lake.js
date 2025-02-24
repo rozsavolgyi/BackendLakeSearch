@@ -12,7 +12,9 @@ exports.getTavak = async (req, res, next) => {
 
 exports.getToById = async (req, res, next) => {
     try {
-        const to = await tavakModel.findById(req.params.id);
+        const to = await tavakModel.findById(req.params.id).populate({
+            path: 'typical_fish'
+        });
         if (!to) {
             return res.status(400).json({ success: false, msg: "Not found" });
         }

@@ -21,21 +21,9 @@ const ToSchema = new mongoose.Schema({
     type:String
   },
   typical_fish: {
-    type: [String],
-    required: true,
-    enum: [
-      'ponty',
-      'harcsa',
-      'csuka',
-      'keszeg',
-      'süllő',
-      'amur',
-      'compó',
-      'afrikai harcsa',
-      'busa',
-      'jász',
-      'paduc'
-    ]
+    type : mongoose.Schema.Types.ObjectId,
+    ref: "typicalFishModel"
+
   },
   water_depth: {
     type: String
