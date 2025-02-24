@@ -9,7 +9,7 @@ exports.getTypicalFish=async(req,res,next)=>{
         res.status(500).json({succes:false})
     }
 }
-exports.getToById = async (req, res, next) => {
+exports.getTypicalFishById = async (req, res, next) => {
     try {
         const typicalFish = await typicalFishModel.findById(req.params.id)
         if (!typicalFish) {
