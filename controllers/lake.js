@@ -3,7 +3,7 @@ const tavakModel = require("../models/TavakModel");
 const ErrorResponse = require("../utils/errorResponse");
 
 exports.getTavak = async (req, res, next) => {
-    const page = parseInt(req.query.page) || 2;
+    const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 6;
     const startIndex = (page - 1) * limit;
     const endIndex=page*limit;
@@ -21,8 +21,6 @@ exports.getTavak = async (req, res, next) => {
             limit,
         };
     }
-
-    query=query.skip(startIndex).limit(limit);
     try {
         const tavak = await tavakModel.find(req.query).skip(startIndex).limit(limit).populate({path: 'typical_fish.fish', select: '-_id'})
         res.status(200).json({ success: true, count: tavak.length, pagination, data: tavak })
