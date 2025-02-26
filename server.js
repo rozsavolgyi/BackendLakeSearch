@@ -28,6 +28,7 @@ const TavakRoutes=require('./routes/lake')
 const typicalfish=require('./routes/typicalFish');
 const county=require('./routes/county')
 const method=require('./routes/method')
+const fish=require('./routes/fish')
 
 const app = express()
 
@@ -52,6 +53,7 @@ app.use("/tavak", TavakRoutes)
 app.use("/typicalFish", typicalfish)
 app.use("/county", county)
 app.use("/method", method)
+app.use("/fish", fish)
 app.use(errorHandler)
 app.get('/', (req, res) => {
     res.status(400).json({ success: false})
