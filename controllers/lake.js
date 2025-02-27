@@ -1,29 +1,19 @@
 const { query } = require("express");
 const tavakModel = require("../models/TavakModel");
 const ErrorResponse = require("../utils/errorResponse");
+const TavakModel = require("../models/TavakModel");
 
 exports.getTavak = async (req, res, next) => {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 6;
-    const startIndex = (page - 1) * limit;
-    const endIndex=page*limit;
-    const total = await tavakModel.countDocuments();
-    const pagination = {};
-    if (startIndex > 0) {
-        pagination.prev = {
-            page: page - 1,
-            limit,
-        };
-    }
-    if (endIndex < total) {
-        pagination.next = {
-            page: page + 1,
-            limit,
-        };
-    }
     try {
-        const tavak = await tavakModel.find(req.query).skip(startIndex).limit(limit).populate({path: 'typical_fish.fish', select: '-_id'})
-        res.status(200).json({ success: true, count: tavak.length, pagination, data: tavak })
+        const {countyId, page=1,limit=10}=req.query
+        const filter = {};
+        if (countyId) {
+            filter.county = countyId;  // Megye szerinti szűrés
+        }
+        const startIndex = (page - 1) * limit
+        const tavak = await tavakModel.find(filter).skip(startIndex).limit(parseInt(limit)).populate({path: 'typical_fish.fish', select: '-_id'})
+        const totalLakes=await TavakModel.countDocuments(filter)
+        res.status(200).json({ data: tavak, total:totalLakes, currentPage:parseInt(page),totalPages:Math.ceil(totalLakes/limit)})
     } catch (error) {
         res.status(500).json({ success: false })
     }
