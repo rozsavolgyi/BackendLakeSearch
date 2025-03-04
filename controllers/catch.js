@@ -81,3 +81,54 @@ exports.deleteCatch = async (req, res) => {
         res.status(500).json({ message: 'Hiba történt a fogás törlésekor', error });
     }
 };
+
+exports.updateCatch = async (req, res) => {
+    try {
+        const { fish, weight, length, date, method, lake, user, bait, img, description } = req.body;
+
+        // Ellenőrizzük, hogy a kötelező mezők ki vannak-e töltve
+        if (!fish || !weight || !length || !date || !method || !lake || !user || !bait || !description) {
+            return res.status(400).json({ message: 'Minden kötelező mezőt ki kell tölteni!' });
+        }
+
+        // Ellenőrizzük, hogy a leírás nem hosszabb, mint 500 karakter
+        if (description.length > 500) {
+            return res.status(400).json({ message: 'A leírás legfeljebb 500 karakter lehet!' });
+        }
+
+        // Ellenőrizzük, hogy léteznek-e a hivatkozott objektumok
+        const fishExists = await Fish.findById(fish);
+        const methodExists = await Method.findById(method);
+        const lakeExists = await Tavak.findById(lake);
+        const userExists = await User.findById(user);
+
+        if (!fishExists || !methodExists || !lakeExists || !userExists) {
+            return res.status(400).json({ message: 'Érvénytelen azonosítók!' });
+        }
+
+        // Megkeressük a fogást, amit frissíteni szeretnénk
+        const catchItem = await Catch.findById(req.params.id);
+        if (!catchItem) {
+            return res.status(404).json({ message: 'Fogás nem található' });
+        }
+
+        // Frissítjük a fogást
+        catchItem.fish = fish;
+        catchItem.weight = weight;
+        catchItem.length = length;
+        catchItem.date = date;
+        catchItem.method = method;
+        catchItem.lake = lake;
+        catchItem.user = user;
+        catchItem.bait = bait;
+        catchItem.description = description;
+        catchItem.img = img || catchItem.img; // Ha nincs új kép, megtartjuk a régit
+
+        // Mentjük el a frissített fogást
+        const updatedCatch = await catchItem.save();
+
+        res.status(200).json({ success: true, data: updatedCatch });
+    } catch (error) {
+        res.status(500).json({ message: 'Hiba történt a fogás frissítésekor', error });
+    }
+};
