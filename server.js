@@ -29,6 +29,7 @@ const typicalfish=require('./routes/typicalFish');
 const county=require('./routes/county')
 const method=require('./routes/method')
 const fish=require('./routes/fish')
+const Catch=require('./routes/catch')
 
 const app = express()
 
@@ -54,6 +55,7 @@ app.use("/typicalFish", typicalfish)
 app.use("/county", county)
 app.use("/method", method)
 app.use("/fish", fish)
+app.use("/catch", Catch)
 app.use(errorHandler)
 app.get('/', (req, res) => {
     res.status(400).json({ success: false})
