@@ -32,6 +32,11 @@ const catchSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    description:{
+        type: String,
+        required: true,
+        maxlength: 500
+    },
     lake: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'TavakModel',
