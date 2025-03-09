@@ -4,7 +4,7 @@ const catchSchema = new mongoose.Schema({
     fish:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'FishModel',
-        require: true
+        required: true
     },
     img:{
         type:String,

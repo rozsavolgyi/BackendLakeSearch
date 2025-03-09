@@ -48,7 +48,7 @@ exports.createCatch = async (req, res) => {
 
         const fishExists = await Fish.findById(fish);
         const methodExists = await Method.findById(method);
-        const lakeExists = await Tavak.findById(lake);
+        const lakeExists = await Lake.findById(lake);
         const userExists = await User.findById(user);
 
         if (!fishExists || !methodExists || !lakeExists || !userExists) {
@@ -69,9 +69,10 @@ exports.createCatch = async (req, res) => {
         });
 
         const savedCatch = await newCatch.save();
-        res.status(201).json(savedCatch);
+        res.status(201).json(savedCatch, { message: 'Fogás sikeresen létrehozva' });
     } catch (error) {
-        res.status(400).json({ message: 'Hiba történt a fogás létrehozásakor', error });
+        console.error("Hiba a createCatch-ben:", error);
+        res.status(400).json({ message: 'Hiba történt a fogás létrehozásakor', error: error.message });
     }
 };
 
@@ -106,7 +107,7 @@ exports.updateCatch = async (req, res) => {
         // Ellenőrizzük, hogy léteznek-e a hivatkozott objektumok
         const fishExists = await Fish.findById(fish);
         const methodExists = await Method.findById(method);
-        const lakeExists = await Tavak.findById(lake);
+        const lakeExists = await Lake.findById(lake);
         const userExists = await User.findById(user);
 
         if (!fishExists || !methodExists || !lakeExists || !userExists) {
@@ -134,7 +135,7 @@ exports.updateCatch = async (req, res) => {
         // Mentjük el a frissített fogást
         const updatedCatch = await catchItem.save();
 
-        res.status(200).json({ success: true, data: updatedCatch });
+        res.status(200).json({ success: true, data: updatedCatch, message: 'Fogás sikeresen frissítve'});
     } catch (error) {
         res.status(500).json({ message: 'Hiba történt a fogás frissítésekor', error });
     }
