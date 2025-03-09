@@ -8,7 +8,15 @@ const ErrorResponse = require("../utils/errorResponse");
 
 exports.getCatch = async (req, res, next) => {
     try {
-        const catchs = await Catch.find(req.query).populate({ path: 'fish' }).populate({ path: 'lake' }).populate({ path: 'method' }).populate({ path: 'user' })
+        let query = {};
+        if (req.query.lakeId) {
+            query.lake = req.query.lakeId;//Szűrés tó szerint
+        }
+        const catchs = await Catch.find(query)
+            .populate('fish', 'name img')  // Csak a szükséges mezőket töltjük be
+            .populate('lake', 'name')
+            .populate('user', 'name')
+            .populate('method', 'name');
         res.status(200).json({ success: true, count: catchs.length, data: catchs })
     } catch (error) {
         res.status(500).json({ success: false, message: 'Hiba történt a fogások lekérésekor', error })
@@ -30,7 +38,6 @@ exports.getCatchById = async (req, res, next) => {
 exports.createCatch = async (req, res) => {
     try {
         const { fish, weight, length, date, method, lake, user, bait, img, description } = req.body;
-
         if (!fish || !weight || !length || !date || !method || !lake || !user || !bait || !description) {
             return res.status(400).json({ message: 'Minden kötelező mezőt ki kell tölteni!' });
         }
