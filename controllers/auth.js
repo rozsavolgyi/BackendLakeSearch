@@ -4,7 +4,7 @@ const sendEmail = require('../utils/sendEmail')
 const ErrorResponse = require('../utils/errorResponse')
 
 // @desc   Register user
-// @route  POST /api/auth/register
+// @route  POST /auth/register
 // @access Public
 exports.register = async (req, res, next) => {
   try {
@@ -30,7 +30,7 @@ exports.register = async (req, res, next) => {
 }
 
 // @desc   Login user
-// @route  POST /api/auth/login
+// @route  POST /auth/login
 // @access Public
 exports.login = async (req, res, next) => {
   try {
@@ -96,7 +96,7 @@ exports.updateDetails = async (req, res, next) => {
   }
   
   // @desc   A bejelentkezett felhasználó jelszavának frissítése
-  // @route  PUT /api/auth/updatepassword
+  // @route  PUT /auth/updatepassword
   // @access Private
   exports.updatePassword = async (req, res, next) => {
     try {
@@ -117,7 +117,7 @@ exports.updateDetails = async (req, res, next) => {
   }
   
   // @desc   Elfelejtett jelszó
-  // @route  POST /api/auth/forgotpassword
+  // @route  POST /auth/forgotpassword
   // @access Public
   exports.forgotPassword = async (req, res, next) => {
     try {
