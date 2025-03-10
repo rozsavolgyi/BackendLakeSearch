@@ -2,7 +2,7 @@ const express = require("express");
 const { 
     register, 
     login,
-    // forgotPassword,
+    forgotPassword,
     resetPassword,
     updateDetails,
     updatePassword
@@ -16,7 +16,7 @@ router.post('/register', register)
 router.post('/login', login)
 router.put('/updatedetails', protect,  updateDetails)
 router.put('/updatepassword', protect,  updatePassword)
-// router.post('/forgotpassword', forgotPassword)
+router.post('/forgotpassword', forgotPassword)
 router.put('/resetpassword/:resettoken', resetPassword)
 
 module.exports = router
