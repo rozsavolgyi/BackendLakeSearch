@@ -127,12 +127,31 @@ exports.forgotPassword = async (req, res, next) => {
     }
     // A reset token megszerzése
     const resetToken = user.getResetPasswordToken()
-    await user.save({validateBeforeSave: false})
-    res.status(200).json({
-      success: true,
-      data: user,
-    })
+    await user.save({ validateBeforeSave: false })
+    const resetUrl = `${req.protocol}://${req.get('host')}/auth/resetpassword/${resetToken}`
+    const message = `Azért kaptad ezt az emailt, mert egy kérés érkezett hozzánk a jelszavad visszaállítására. A jelszó visszaállításához kattints az alábbi linkre: \n\n ${resetUrl}`
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Password reset token',
+        message
+      })
+      res.status(200).json({
+        success: true,
+        data: 'Email elküldve',
+      })
+
+    } catch (error) {
+      console.log(error);
+      user.resetPasswordToken = undefined
+      user.resetPasswordExpire = undefined
+
+      await user.save({ validateBeforeSave: false })
+
+      return next(new ErrorResponse('Email nem lett elküldve', 500))
+    }
   } catch (error) {
+    console.error("Hiba:", error);
     res.status(400).json({ success: false, msg: error.message })
   }
 }
