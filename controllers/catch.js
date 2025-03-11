@@ -69,7 +69,7 @@ exports.createCatch = async (req, res) => {
         });
 
         const savedCatch = await newCatch.save();
-        res.status(201).json(savedCatch, { message: 'Fogás sikeresen létrehozva' });
+        res.status(201).json({message: 'Fogás sikeresen létrehozva',data: savedCatch});
     } catch (error) {
         console.error("Hiba a createCatch-ben:", error);
         res.status(400).json({ message: 'Hiba történt a fogás létrehozásakor', error: error.message });
