@@ -37,7 +37,7 @@ exports.getCatchById = async (req, res, next) => {
 
 exports.createCatch = async (req, res) => {
     try {
-        const { fish, weight, length, date, method, lake, user, bait, img, description } = req.body;
+        const { fish, weight, length, date, method, lake, user, bait, description } = req.body;
         if (!fish || !weight || !length || !date || !method || !lake || !user || !bait || !description) {
             return res.status(400).json({ message: 'Minden kötelező mezőt ki kell tölteni!' });
         }
@@ -55,6 +55,8 @@ exports.createCatch = async (req, res) => {
             return res.status(400).json({ message: 'Érvénytelen azonosítók!' });
         }
 
+        const imageUrl = req.file ? `/uploads/${req.file.filename}` : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRP-OEry7CChvfqglcuIYjclKu7b0NEcMeegg&s";
+
         const newCatch = new Catch({
             fish,
             weight,
@@ -65,9 +67,10 @@ exports.createCatch = async (req, res) => {
             user,
             bait,
             description,
-            img: img || 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRP-OEry7CChvfqglcuIYjclKu7b0NEcMeegg&s'
+            img: imageUrl
         });
-
+        console.log("Feltöltött fájl:", req.file);
+        console.log("Request body:", req.body);
         const savedCatch = await newCatch.save();
         res.status(201).json({message: 'Fogás sikeresen létrehozva',data: savedCatch});
     } catch (error) {
