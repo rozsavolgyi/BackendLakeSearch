@@ -72,7 +72,7 @@ exports.createCatch = async (req, res) => {
         console.log("Feltöltött fájl:", req.file);
         console.log("Request body:", req.body);
         const savedCatch = await newCatch.save();
-        res.status(201).json({message: 'Fogás sikeresen létrehozva',data: savedCatch});
+        res.status(201).json({ message: 'Fogás sikeresen létrehozva', data: savedCatch });
     } catch (error) {
         console.error("Hiba a createCatch-ben:", error);
         res.status(400).json({ message: 'Hiba történt a fogás létrehozásakor', error: error.message });
@@ -138,8 +138,29 @@ exports.updateCatch = async (req, res) => {
         // Mentjük el a frissített fogást
         const updatedCatch = await catchItem.save();
 
-        res.status(200).json({ success: true, data: updatedCatch, message: 'Fogás sikeresen frissítve'});
+        res.status(200).json({ success: true, data: updatedCatch, message: 'Fogás sikeresen frissítve' });
     } catch (error) {
         res.status(500).json({ message: 'Hiba történt a fogás frissítésekor', error });
+    }
+};
+exports.getCatchByUserId = async (req, res, next) => {
+    try {
+        const userId = req.params.userId;  // A userId paraméter
+
+        // Fogások lekérése a userId alapján
+        const catchs = await Catch.find({ user: userId })
+            .populate('fish', 'name img')  // Csak a szükséges mezők betöltése
+            .populate('lake', 'name')
+            .populate('method', 'name')
+            .populate('user', 'name');
+
+        if (!catchs || catchs.length === 0) {
+            return res.status(404).json({ success: false, message: 'Nincs fogás a felhasználóhoz rendelve.' });
+        }
+
+        res.status(200).json({ success: true, data: catchs });
+    } catch (error) {
+        console.error('Hiba történt a fogások lekérésekor:', error);
+        res.status(500).json({ success: false, message: 'Hiba történt a fogások lekérésekor', error });
     }
 };
