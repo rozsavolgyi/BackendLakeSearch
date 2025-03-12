@@ -37,6 +37,8 @@ exports.getCatchById = async (req, res, next) => {
 
 exports.createCatch = async (req, res) => {
     try {
+        console.log("Feltöltött fájl:", req.file);
+        console.log("Request body:", req.body);
         const { fish, weight, length, date, method, lake, user, bait, description } = req.body;
         if (!fish || !weight || !length || !date || !method || !lake || !user || !bait || !description) {
             return res.status(400).json({ message: 'Minden kötelező mezőt ki kell tölteni!' });
@@ -69,8 +71,7 @@ exports.createCatch = async (req, res) => {
             description,
             img: imageUrl
         });
-        console.log("Feltöltött fájl:", req.file);
-        console.log("Request body:", req.body);
+
         const savedCatch = await newCatch.save();
         res.status(201).json({ message: 'Fogás sikeresen létrehozva', data: savedCatch });
     } catch (error) {
