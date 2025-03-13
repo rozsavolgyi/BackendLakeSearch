@@ -57,7 +57,7 @@ exports.createCatch = async (req, res) => {
             return res.status(400).json({ message: 'Érvénytelen azonosítók!' });
         }
 
-        const imageUrl = req.file ? `/uploads/${req.file.filename}` : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRP-OEry7CChvfqglcuIYjclKu7b0NEcMeegg&s";
+        const imageUrl = req.file ? `http://localhost:3000/uploads/${req.file.filename}` : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRP-OEry7CChvfqglcuIYjclKu7b0NEcMeegg&s";
 
         const newCatch = new Catch({
             fish,

@@ -61,7 +61,10 @@ const ToSchema = new mongoose.Schema({
         type: String
       }
     }
-  ]
+  ],
+  link:{
+    type:String
+  }
 },
 )
 
