@@ -156,7 +156,7 @@ exports.getCatchByUserId = async (req, res, next) => {
             .populate('user', 'name');
 
         if (!catchs || catchs.length === 0) {
-            return res.status(200).json({ success: true, message: 'Nincs fogás a felhasználóhoz rendelve.', data: [] });
+            return res.status(404).json({ success: false, message: 'Nincs fogás a felhasználóhoz rendelve.' });
         }
 
         res.status(200).json({ success: true, data: catchs });
