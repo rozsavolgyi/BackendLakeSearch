@@ -47,8 +47,6 @@ exports.getCatchById = async (req, res, next) => {
 
 exports.createCatch = async (req, res) => {
   try {
-    console.log("Feltöltött fájl:", req.file);
-    console.log("Request body:", req.body);
     const {
       fish,
       weight,
