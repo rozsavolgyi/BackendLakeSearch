@@ -46,6 +46,10 @@ const catchSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
+    },
+    catchandrelease:{
+        type: Boolean,
+        default:false
     }
 }, {timestamps: true});
 
