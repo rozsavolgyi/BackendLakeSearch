@@ -1,14 +1,14 @@
 const mongoose=require("mongoose")
 
 const FishSchema=new mongoose.Schema({
-    name: String,
-    min_length:Number,
-    max_length:Number,
-    min_weight:Number,
-    max_weight:Number,
-    curfew:{
-        start:Date,
-        end:Date
+    name: { type: String, required: true },
+    min_length: { type: Number, required: true, min: 0 }, 
+    max_length: { type: Number, required: true, min: 0 },
+    min_weight: { type: Number, required: true, min: 0 }, 
+    max_weight: { type: Number, required: true, min: 0 },
+    curfew: {
+        start: { type: Date }, 
+        end: { type: Date }
     }
 })
 
