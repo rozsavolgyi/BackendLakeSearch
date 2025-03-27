@@ -47,44 +47,19 @@ exports.getCatchById = async (req, res, next) => {
 
 exports.createCatch = async (req, res) => {
   try {
-    const {
-      fish,
-      weight,
-      length,
-      date,
-      method,
-      lake,
-      user,
-      bait,
-      description
-    } = req.body;
-
-    const catchandrelease = req.body.catchandrelease && req.body.catchandrelease === 'true';
-
-
-    const isMeaningfulText = (text) => {
-      const allowedChars = /^[A-Za-zÁ-űáéíóöőúüű0-9\s.,!?()'"-]{5,}$/u;
-      if (!allowedChars.test(text)) return false;
-      if (/(.)\1{4,}/.test(text)) return false;
-      const vowelMatch = text.match(/[aeiouáéíóöőúüű]/gi);
-      if (!vowelMatch || vowelMatch.length < 2) return false;
-      return true;
-    };
+    const { fish, weight, length, date, method, lake, user, bait, description, catchandrelease } = req.body;
+    const isCatchAndRelease = catchandrelease === 'true';
 
     if (!fish || !weight || !length || !date || !method || !lake || !user || !bait || !description) {
       return res.status(400).json({ message: "Minden kötelező mezőt ki kell tölteni!" });
     }
 
-    if (!isMeaningfulText(description)) {
-      return res.status(400).json({ message: "A leírás nem tűnik értelmes szövegnek!" });
+    const isMeaningfulText = (text) => /^[A-Za-zÁ-űáéíóöőúüű0-9\s.,!?()'"-]{5,}$/u.test(text) && !/(.)\1{4,}/.test(text) && (text.match(/[aeiouáéíóöőúüű]/gi) || []).length >= 2;
+    if (!isMeaningfulText(description) || description.length > 500) {
+      return res.status(400).json({ message: "A leírás nem megfelelő!" });
     }
-
     if (!isMeaningfulText(bait)) {
-      return res.status(400).json({ message: "A csali megnevezés nem tűnik értelmesnek!" });
-    }
-
-    if (description.length > 500) {
-      return res.status(400).json({ message: "A leírás legfeljebb 500 karakter lehet!" });
+      return res.status(400).json({ message: "A csali megnevezés nem megfelelő!" });
     }
 
     const fishExists = await Fish.findById(fish);
@@ -92,55 +67,46 @@ exports.createCatch = async (req, res) => {
       return res.status(400).json({ message: "Érvénytelen hal azonosító!" });
     }
 
-    // Csak ha elviszed a halat, akkor legyenek érvényben a súly/hossz/tilalmi validációk
-    if (catchandrelease === 'false' || catchandrelease === false) {
+    if (!isCatchAndRelease) {
       if (weight < fishExists.min_weight || weight > fishExists.max_weight) {
-        return res.status(400).json({ message: `A hal súlya csak ${fishExists.min_weight} - ${fishExists.max_weight} kg között lehet!` });
+        return res.status(400).json({ message: `A hal súlya ${fishExists.min_weight}-${fishExists.max_weight} kg között lehet!` });
       }
-
       if (length < fishExists.min_length || length > fishExists.max_length) {
-        return res.status(400).json({ message: `A hal hossza csak ${fishExists.min_length} - ${fishExists.max_length} cm között lehet!` });
+        return res.status(400).json({ message: `A hal hossza ${fishExists.min_length}-${fishExists.max_length} cm között lehet!` });
       }
-
-      if (fishExists.curfew && fishExists.curfew.start && fishExists.curfew.end) {
-        const catchDate = new Date(date);
-        const curfewStart = new Date(fishExists.curfew.start);
-        const curfewEnd = new Date(fishExists.curfew.end);
-
-        if (catchDate >= curfewStart && catchDate <= curfewEnd) {
+      if (fishExists.curfew?.start && fishExists.curfew?.end) {
+        const catchMonthDay = date.split('-').slice(1).join('-');
+        if (isDateBetween(catchMonthDay, fishExists.curfew.start, fishExists.curfew.end)) {
           return res.status(400).json({ message: "Ebben az időszakban a hal nem fogható!" });
         }
       }
     }
 
-    const imageUrl = req.file
-      ? `http://localhost:3000/uploads/${req.file.filename}`
-      : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRP-OEry7CChvfqglcuIYjclKu7b0NEcMeegg&s";
-
     const newCatch = new Catch({
-      fish,
-      weight,
-      length,
-      date,
-      method,
-      lake,
-      user,
-      bait,
-      description,
-      img: imageUrl,
-      catchandrelease
+      fish, weight, length, date, method, lake, user, bait, description,
+      img: req.file ? `http://localhost:3000/uploads/${req.file.filename}` : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRP-OEry7CChvfqglcuIYjclKu7b0NEcMeegg&s",
+      catchandrelease: isCatchAndRelease
     });
 
     const savedCatch = await newCatch.save();
     res.status(201).json({ message: "Fogás sikeresen létrehozva", data: savedCatch });
   } catch (error) {
     console.error("Hiba a createCatch-ben:", error);
-    res.status(400).json({
-      message: "Hiba történt a fogás létrehozásakor",
-      error: error.message,
-    });
+    res.status(400).json({ message: "Hiba történt a fogás létrehozásakor", error: error.message });
   }
 };
+
+function isDateBetween(monthDay, start, end) {
+  const [month, day] = monthDay.split('-').map(Number);
+  const [startMonth, startDay] = start.split('-').map(Number);
+  const [endMonth, endDay] = end.split('-').map(Number);
+
+  const checkDate = new Date(2000, month - 1, day);
+  const startDate = new Date(2000, startMonth - 1, startDay);
+  const endDate = new Date(2000, endMonth - 1, endDay);
+
+  return startDate <= endDate ? (checkDate >= startDate && checkDate <= endDate) : (checkDate >= startDate || checkDate <= endDate);
+}
 
 exports.deleteCatch = async (req, res) => {
   try {

@@ -7,8 +7,8 @@ const FishSchema=new mongoose.Schema({
     min_weight: { type: Number, required: true, min: 0 }, 
     max_weight: { type: Number, required: true, min: 0 },
     curfew: {
-        start: { type: Date }, 
-        end: { type: Date }
+        start: { type: String }, 
+        end: { type: String }
     }
 })
 
