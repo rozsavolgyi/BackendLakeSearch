@@ -1,9 +1,9 @@
 const request = require("supertest");
 const mongoose = require("mongoose");
-const app = require("../server");
-const typicalFishModel = require("../models/typicalFishModel");
+const app = require("../../server");
+const typicalFishModel = require("../../models/typicalFishModel");
 
-jest.mock("../models/typicalFishModel");
+jest.mock("../../models/typicalFishModel");
 
 describe("TypicalFish Controller", () => {
   afterEach(() => {
