@@ -17,9 +17,9 @@ database.on("error", (error) => {
     console.log(error);
 });
 
-database.once("connected", () => {
-    console.log(`Database Connected ${database.host}`);
-});
+// database.once("connected", () => {
+//     console.log(`Database Connected ${database.host}`);
+// });
 
 const auth = require('./routes/auth');
 const TavakRoutes = require('./routes/lake');
