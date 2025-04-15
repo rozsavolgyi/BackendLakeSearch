@@ -9,17 +9,22 @@ const errorHandler = require('./middleware/error');
 const mongoose = require('mongoose');
 
 mongoose.set("strictQuery", true);
-const mongoString = process.env.DATABASE_URL;
-mongoose.connect(mongoString);
-const database = mongoose.connection;
 
-database.on("error", (error) => {
-    console.log(error);
-});
-
-// database.once("connected", () => {
-//     console.log(`Database Connected ${database.host}`);
-// });
+// Csak akkor csatlakozunk az adatbázishoz, ha nem teszt környezetben vagyunk
+if (process.env.NODE_ENV !== 'test') {
+    const mongoString = process.env.DATABASE_URL;
+    mongoose.connect(mongoString);
+    
+    const database = mongoose.connection;
+    
+    database.on("error", (error) => {
+        console.log(error);
+    });
+    
+    database.once("connected", () => {
+        console.log(`Database Connected ${database.host}`);
+    });
+}
 
 const auth = require('./routes/auth');
 const TavakRoutes = require('./routes/lake');
@@ -54,7 +59,7 @@ app.get('/', (req, res) => {
     res.status(400).json({ success: false });
 });
 
-// Csak akkor indítunk szervert, ha NEM tesztelünk
+// Csak akkor indítjuk a szervert, ha nem teszt környezetben vagyunk
 if (process.env.NODE_ENV !== 'test') {
     const server = app.listen(process.env.PORT, () => {
         console.log(`Server running on port ${process.env.PORT}`);
